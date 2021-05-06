@@ -1,0 +1,4 @@
+#ifndef MAINWINDOW_HH
+#define MAINWINDOW_HH
+
+#endif // MAINWINDOW_HH

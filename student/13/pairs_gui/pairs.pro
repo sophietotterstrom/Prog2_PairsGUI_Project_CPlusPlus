@@ -6,8 +6,16 @@ CONFIG -= qt
 SOURCES += \
         card.cpp \
         main.cpp \
+        mainwindow.cpp \
         player.cpp
 
 HEADERS += \
     card.hh \
+    mainwindow.hh \
     player.hh
+
+DISTFILES += \
+    instructions.txt
+
+FORMS += \
+    mainwindow.ui

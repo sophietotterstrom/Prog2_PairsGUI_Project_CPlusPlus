@@ -350,7 +350,7 @@ bool is_input_valid(vector<string> input, Game_board_type& g_board)
 // Prints the status of all players using a Player class method print in a loop.
 void printing_score_status(vector<Player> players)
 {
-    for (Player object : players)
+    for (Player& object : players)
     {
         object.print();
     }
@@ -408,7 +408,7 @@ bool is_game_over(unsigned int fac1, unsigned int fac2, vector<Player>& players)
     int total_score_of_pairs = 0;
 
     // Going through every playe and finding the scores.
-    for (Player player : players)
+    for (Player& player : players)
     {
         total_score_of_pairs += player.number_of_pairs();
     }
@@ -430,7 +430,7 @@ void who_won(vector<Player> players)
     int number_of_players_who_have_tied = 1;
 
     // Loops through all players.
-    for (Player player : players)
+    for (Player& player : players)
     {
         // If the player has the most pairs thus far, we name them the
         // winner (until someone else has more pairs) and reset the
