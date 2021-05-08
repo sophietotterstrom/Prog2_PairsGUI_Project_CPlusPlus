@@ -3,6 +3,12 @@
 
 #include <QMainWindow>
 #include <QGridLayout>
+#include <QPushButton>
+#include <QString>
+
+#include <map>
+#include "card.hh"
+
 
 QT_BEGIN_NAMESPACE
 
@@ -29,7 +35,9 @@ private slots:
     void ask_product_and_calculate_factors(unsigned int& smaller_factor, unsigned int& bigger_factor);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui_;
+
+    std::map<QString, Card> map_of_cards_;
 
 };
 #endif // MAINWINDOW_HH
