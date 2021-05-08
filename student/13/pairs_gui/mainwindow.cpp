@@ -3,10 +3,13 @@
 #include "card.hh"
 #include <cstring>
 #include <iostream>
+#include <random>
+#include <QDebug>
 
 using namespace std;
 
 int NUMBER_OF_CARDS = 24;
+int SEED = 374;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,6 +48,27 @@ void MainWindow::add_cards_to_grid()
     unsigned int column = 1;
     ask_product_and_calculate_factors(row, column);
 
+    // Drawing a cell to be filled
+    default_random_engine randomEng(SEED);
+    uniform_int_distribution<int> distr(0, row * column - 1);
+
+    // Wiping out the first random number (that is always the lower bound of the distribution)
+    distr(randomEng);
+
+    // If the drawn cell is already filled with a card, next empty cell will be used.
+    // (The next empty cell is searched for circularly, see function next_free.)
+    for(unsigned int i = 0, c = 'A'; i < row * column - 1; i += 2, ++c)
+    {
+        // Adding two identical cards (pairs) in the game board
+        for(unsigned int j = 0; j < 2; ++j)
+        {
+            unsigned int cell = distr(randomEng);
+            //cell = next_free(g_board, cell);
+            //g_board.at(cell / columns).at(cell % columns).set_letter(c);
+            //g_board.at(cell / columns).at(cell % columns).set_visibility(HIDDEN);
+        }
+    }
+
 
     for (unsigned int i = 0; i<column; i++)
     {
@@ -63,6 +87,12 @@ void MainWindow::add_cards_to_grid()
 
             ui_->cardGridLayout->addWidget(card.button(), j, i);
 
+            QString name_qstring = QString::fromStdString(name_string);
+            card.set_button_name(name_qstring);
+
+            map_of_cards_.insert({name_qstring, &card});
+
+
 
         }
     }
@@ -77,14 +107,23 @@ void MainWindow::handle_card_click()
     // Main Window's location from the global one
     int local_x = global_click_position.x() - geometry().x();
     int local_y = global_click_position.y() - geometry().y();
-
-
-    QWidget::childAt(local_x, local_y);
-
     QWidget* card = QWidget::childAt(local_x, local_y);
-    QString name = card->objectName();
+    QString found_button_name = card->objectName();
 
-    card->setStyleSheet(QString("background-color: yellow"));
+    QPushButton *temp_button = dynamic_cast<QPushButton*>(card);
+    temp_button->setText(found_button_name);
+
+    // card->setStyleSheet(QString("background-color: yellow"));
+
+
+    if (map_of_cards_.find(found_button_name) != map_of_cards_.end())
+    {
+        // card is in the map, turn the card
+        // map_of_cards_.at(found_button_name)->turn();
+        QString nameqstr = map_of_cards_.at(found_button_name)->get_button_name();//button()->setStyleSheet(QString("background-color: yellow"));
+        string namestr = nameqstr.toUtf8().constData();
+        cout << "Name: " << namestr << endl;
+    }
 }
 
 

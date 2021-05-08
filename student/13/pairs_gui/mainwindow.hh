@@ -37,7 +37,7 @@ private slots:
 private:
     Ui::MainWindow *ui_;
 
-    std::map<QString, Card> map_of_cards_;
+    std::map<QString, Card*> map_of_cards_;
 
 };
 #endif // MAINWINDOW_HH

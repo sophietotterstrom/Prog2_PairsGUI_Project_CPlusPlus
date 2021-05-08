@@ -29,6 +29,7 @@ public:
     void set_letter(const char c);
     void set_visibility(const Visibility_type visibility);
     void set_card_button(QPushButton *cardButton);
+    void set_button_name(QString button_name_qstr);
     char get_letter() const;
     QString get_button_name();
     Visibility_type get_visibility() const;
@@ -44,6 +45,7 @@ private:
     char letter_;
     Visibility_type visibility_;
     QPushButton *cardButton_;
+    QString button_name_;
 };
 
 #endif // CARD_HH

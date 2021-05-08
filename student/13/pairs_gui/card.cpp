@@ -48,6 +48,11 @@ void Card::set_card_button(QPushButton *cardButton)
     this->cardButton_ = cardButton;
 }
 
+void Card::set_button_name(QString button_name_qstr)
+{
+    button_name_ = button_name_qstr;
+}
+
 char Card::get_letter() const
 {
 
@@ -55,7 +60,7 @@ char Card::get_letter() const
 
 QString Card::get_button_name()
 {
-
+    return button_name_;
 }
 
 Visibility_type Card::get_visibility() const
@@ -70,7 +75,9 @@ QPushButton *Card::button()
 
 void Card::turn()
 {
-    //card->setStyleSheet(QString("background-color: yellow"));
+    // cardButton_->setStyleSheet(QString("background-color: yellow"));
+
+    // this->cardButton_->setText(QString(QChar::fromLatin1(letter_)));
 }
 
 void Card::remove_from_game_board()
