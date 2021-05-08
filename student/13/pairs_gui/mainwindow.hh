@@ -23,9 +23,9 @@ public:
 private slots:
 
     void on_card_turned();
-    void handle_card_click(QGridLayout& grid);
+    void handle_card_click();
     void on_reset_button_clicked();
-    void add_card_to_grid();
+    void add_cards_to_grid();
     void ask_product_and_calculate_factors(unsigned int& smaller_factor, unsigned int& bigger_factor);
 
 private:

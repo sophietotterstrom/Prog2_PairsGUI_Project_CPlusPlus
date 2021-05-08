@@ -3,14 +3,14 @@
 #include <cstring>
 #include <iostream>
 
+using namespace std;
+
 int NUMBER_OF_CARDS = 24;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    QPoint global_click_position;
-
     ui->setupUi(this);
 
     // connecting buttons
@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::on_reset_button_clicked);
 
 
-    add_card_to_grid();
+    add_cards_to_grid();
 }
 
 MainWindow::~MainWindow()
@@ -32,51 +32,13 @@ void MainWindow::on_card_turned()
 
 }
 
-// To avoid repetitive code, this method implements a general handling
-// for both letter and number push button clicks.
-void MainWindow::handle_card_click(QGridLayout& grid)
-{
-    // Storing global cursor position
-    QPoint global_click_position = QCursor::pos();
-
-    // Counting local cursor position, i.e. decreasing
-    // Main Window's location from the global one
-    int local_x = global_click_position.x() - geometry().x();
-    int local_y = global_click_position.y() - geometry().y();
-    QPoint local_click_position = QPoint(local_x, local_y);
-
-    int rows = grid.rowCount();
-    int columns = grid.columnCount();
-
-    // Searching for the button clicked
-    for(int i = 0; i < columns; ++i)
-    {
-        for (int j = 0; j < rows; j++)
-        {
-            if (grid.itemAtPosition(j, i)->geometry().contains(local_click_position))
-            {
-                std::cout << grid.itemAtPosition(j, i);
-            }
-        }
-        /*
-        if(button_vec.at(i)->geometry().contains(local_click_position))
-        {
-            char c = starter + i;
-            written_text_ += c;
-            text_browser_->setText(written_text_);
-            return; // For efficiency reasons
-                    // (only one button can be clicked at a time)
-                    */
-
-    }
-}
 
 void MainWindow::on_reset_button_clicked()
 {
     ui->resetButton->setAutoFillBackground(true);
 }
 
-void MainWindow::add_card_to_grid()
+void MainWindow::add_cards_to_grid()
 {
     unsigned int row = 1;
     unsigned int column = 1;
@@ -85,19 +47,20 @@ void MainWindow::add_card_to_grid()
 
     for (unsigned int i = 0; i<column; i++)
     {
-        // ui->cardGridLayout->setColumnMinimumWidth(i, 40);
         for (unsigned int j = 0; j<row; j++)
         {
-            // ui->cardGridLayout->setRowMinimumHeight(j, 200);
+            cout << "i: " << i << " j: " << j << endl;
 
-            std::string card_name_string = "cardButton"+std::to_string(i)+std::to_string(j);
+            string card_name_string = "cardButton"+to_string(i)+to_string(j);
             char card_name[card_name_string.length()];
-            std::strcpy(card_name, card_name_string.c_str());
+            strcpy(card_name, card_name_string.c_str());
 
             QPushButton* cardButton = new QPushButton(ui->gridLayoutWidget);
+            // int x = cardButton->pos().x();
+            // int y = cardButton->pos().y();
+
             cardButton->setObjectName(QString::fromUtf8(card_name));
 
-            cardButton->setFixedSize(QSize(55, 70));
             cardButton->setStyleSheet(QString("background-color: "
                                               "qlineargradient(spread:pad, "
                                               "x1:0, y1:1, x2:0, y2:0, stop:0 "
@@ -110,12 +73,35 @@ void MainWindow::add_card_to_grid()
                                               "rgba(255, 136, 0, 206), stop:0.935 "
                                               "rgba(239, 236, 55, 112))"));
 
+            connect(cardButton, &QPushButton::clicked, this, &MainWindow::handle_card_click);
 
             ui->cardGridLayout->addWidget(cardButton, j, i);
+
+            QSizePolicy cardButton_policy (QSizePolicy::Minimum, QSizePolicy::Minimum);
+            cardButton_policy.setHorizontalStretch(1);
+            cardButton_policy.setVerticalStretch(1);
+            cardButton->setSizePolicy(cardButton_policy);
+
         }
     }
-    ui->cardGridLayout->setVerticalSpacing(30);
 }
+
+// To avoid repetitive code, this method implements a general handling
+// for both letter and number push button clicks.
+void MainWindow::handle_card_click()
+{
+    // Storing global cursor position
+    QPoint global_click_position = QCursor::pos();
+
+    // Counting local cursor position, i.e. decreasing
+    // Main Window's location from the global one
+    int local_x = global_click_position.x() - geometry().x();
+    int local_y = global_click_position.y() - geometry().y();
+
+    QWidget* card = QWidget::childAt(local_x, local_y);
+    card->setStyleSheet(QString("background-color: yellow"));
+}
+
 
 // Asks the desired product from the user, and calculates the factors of
 // the product such that the factor as near to each other as possible.
