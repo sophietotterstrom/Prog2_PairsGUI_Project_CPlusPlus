@@ -24,6 +24,11 @@ int Player::get_points()
     return points_;
 }
 
+std::string Player::get_name()
+{
+    return label_->text().toStdString();
+}
+
 void Player::set_score_on_lcdnum()
 {
     point_lcdnum_->display(points_);

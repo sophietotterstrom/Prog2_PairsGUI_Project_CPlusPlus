@@ -41,6 +41,7 @@ private slots:
     void add_point();
     int cards_turned();
     bool check_pairs();
+    bool is_game_over();
     void on_turnCardsBackButtonClicked();
     void on_resetGameButtonClicked();
     void ask_product_and_calculate_factors(unsigned int& smaller_factor, unsigned int& bigger_factor);

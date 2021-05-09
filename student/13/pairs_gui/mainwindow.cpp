@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-#include <QDebug>
+#include <QMessageBox>
 
 using namespace std;
 
@@ -139,19 +139,6 @@ void MainWindow::handle_card_click()
     QString found_button_name_qstring = card->objectName();
     string found_button_name = found_button_name_qstring.toStdString();
 
-/*
-    // QPushButton *temp_button = dynamic_cast<QPushButton*>(card);
-    std::cout << found_button_name_qstring.toUtf8().constData() << std::endl;
-    std::cout << vector_of_cards_.size() << std::endl;
-    for (auto card_pointer: vector_of_cards_) {
-        cout << "IN loop" << endl;
-        std::cout << card_pointer->get_letter() << std::endl;
-        if (card_pointer->get_button_name() == card->objectName())
-            std::cout << " FOUND: " << card_pointer->get_button_name().toUtf8().constData() << std::endl;
-            card_pointer->turn();
-            break;
-    }
-*/
     if (map_of_cards_.find(found_button_name) != map_of_cards_.end())
     {
         // card is in the map, turn the card
@@ -167,6 +154,15 @@ void MainWindow::handle_card_click()
             if (check_pairs())
             {
                 this->add_point();
+                if (is_game_over())
+                {
+                    QMessageBox winAlertBox;
+                    string points = to_string(current_player_->get_points());
+                    string win_string = current_player_->get_name() + " has won with " + points + " points!  ";
+                    winAlertBox.setText(QString(win_string.c_str()));
+                    winAlertBox.setWindowTitle("Game Over!");
+                    winAlertBox.exec();
+                }
             }
             else
             {
@@ -229,6 +225,18 @@ bool MainWindow::check_pairs()
     }
 }
 
+bool MainWindow::is_game_over()
+{
+    for (auto& key_value_pair : map_of_cards_)
+    {
+        if (key_value_pair.second.get_visibility() != FOUND)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void MainWindow::on_turnCardsBackButtonClicked()
 {
     vector<Card> temp_vect;
@@ -253,9 +261,6 @@ void MainWindow::on_turnCardsBackButtonClicked()
 
 void MainWindow::on_resetGameButtonClicked()
 {
-    // ui_->resetButton->setAutoFillBackground(true);
-
-
 
 }
 

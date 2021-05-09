@@ -24,6 +24,7 @@ public:
 
     void add_point();
     int get_points();
+    std::string get_name();
 
     void set_score_on_lcdnum();
     void display_in_turn();
