@@ -1,15 +1,18 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "card.hh"
+
 #include <cstring>
 #include <iostream>
 #include <random>
+
 #include <QDebug>
 
 using namespace std;
 
 int NUMBER_OF_CARDS = 24;
 int SEED = 374;
+int TIMER_INTERVAL_ms = 1;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     // connecting buttons
     connect(ui_->resetButton, &QPushButton::clicked, this,
             &MainWindow::on_reset_button_clicked);
-
 
     add_cards_to_grid();
 }
@@ -69,7 +71,6 @@ void MainWindow::add_cards_to_grid()
         }
     }
 
-
     for (unsigned int i = 0; i<column; i++)
     {
         for (unsigned int j = 0; j<row; j++)
@@ -83,20 +84,32 @@ void MainWindow::add_cards_to_grid()
             strcpy(name, name_string.c_str());
             card.button()->setObjectName(name);
 
-            connect(card.button(), &QPushButton::clicked, this, &MainWindow::handle_card_click);
-
-            ui_->cardGridLayout->addWidget(card.button(), j, i);
-
             QString name_qstring = QString::fromStdString(name_string);
             card.set_button_name(name_qstring);
 
-            map_of_cards_.insert({name_qstring, &card});
+            connect(card.button(), &QPushButton::clicked, this,
+                    &MainWindow::handle_card_click);
+
+            ui_->cardGridLayout->addWidget(card.button(), j, i);
 
 
+            map_of_cards_.insert({name_string, card});
 
         }
     }
 }
+
+void MainWindow::in_turn()
+{
+    ui_->player1Label->setStyleSheet("background-color: yellow");
+
+}
+
+void MainWindow::add_point()
+{
+
+}
+
 
 void MainWindow::handle_card_click()
 {
@@ -108,24 +121,50 @@ void MainWindow::handle_card_click()
     int local_x = global_click_position.x() - geometry().x();
     int local_y = global_click_position.y() - geometry().y();
     QWidget* card = QWidget::childAt(local_x, local_y);
-    QString found_button_name = card->objectName();
+    QString found_button_name_qstring = card->objectName();
+    string found_button_name = found_button_name_qstring.toStdString();
 
-    QPushButton *temp_button = dynamic_cast<QPushButton*>(card);
-    temp_button->setText(found_button_name);
-
-    // card->setStyleSheet(QString("background-color: yellow"));
-
+    // QPushButton *temp_button = dynamic_cast<QPushButton*>(card);
 
     if (map_of_cards_.find(found_button_name) != map_of_cards_.end())
     {
         // card is in the map, turn the card
-        // map_of_cards_.at(found_button_name)->turn();
-        QString nameqstr = map_of_cards_.at(found_button_name)->get_button_name();//button()->setStyleSheet(QString("background-color: yellow"));
-        string namestr = nameqstr.toUtf8().constData();
-        cout << "Name: " << namestr << endl;
+
+        if (can_card_be_turned()) // returns true if only 0 or 1 card is turned
+        {
+            map_of_cards_.at(found_button_name).turn();
+        }
+        else {
+            // handle what to do if card can't be turned
+        }
     }
 }
 
+bool MainWindow::can_card_be_turned()
+{
+    // loop through visibility of all cards
+    // if only 1 or 0 cards have visibility OPEN, return true
+    // else return false
+
+    int i = 0;
+    for (auto& key_value_pair : map_of_cards_)
+    {
+        Visibility_type visibility = key_value_pair.second.get_visibility();
+
+        if (visibility == OPEN)
+        {
+            i++;
+        }
+    }
+    if ((i == 0) or (i==1))
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
 
 // Asks the desired product from the user, and calculates the factors of
 // the product such that the factor as near to each other as possible.

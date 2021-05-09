@@ -15,6 +15,9 @@ Card::Card(const char c)
 
     this->button()->setObjectName(QString(c));
 
+    this->button()->setIcon(QIcon("heart.png"));
+    this->button()->setIconSize(QSize(50,50));
+
     this->button()->setStyleSheet(QString("background-color: "
                                       "qlineargradient(spread:pad, "
                                       "x1:0, y1:1, x2:0, y2:0, stop:0 "
@@ -27,10 +30,13 @@ Card::Card(const char c)
                                       "rgba(255, 136, 0, 206), stop:0.935 "
                                       "rgba(239, 236, 55, 112))"));
 
+
     QSizePolicy cardButton_policy (QSizePolicy::Minimum, QSizePolicy::Minimum);
     cardButton_policy.setHorizontalStretch(1);
     cardButton_policy.setVerticalStretch(1);
     this->button()->setSizePolicy(cardButton_policy);
+
+    this->set_visibility(HIDDEN);
 }
 
 void Card::set_letter(const char c)
@@ -40,7 +46,7 @@ void Card::set_letter(const char c)
 
 void Card::set_visibility(const Visibility_type visibility)
 {
-
+    visibility_ = visibility;
 }
 
 void Card::set_card_button(QPushButton *cardButton)
@@ -65,7 +71,7 @@ QString Card::get_button_name()
 
 Visibility_type Card::get_visibility() const
 {
-
+    return visibility_;
 }
 
 QPushButton *Card::button()
@@ -75,9 +81,16 @@ QPushButton *Card::button()
 
 void Card::turn()
 {
-    // cardButton_->setStyleSheet(QString("background-color: yellow"));
+    cardButton_->setText(QString(QChar::fromLatin1(letter_)));
+    cardButton_->setStyleSheet(QString("background-color: yellow"));
+    cardButton_->setIcon(QIcon());
 
-    // this->cardButton_->setText(QString(QChar::fromLatin1(letter_)));
+    if (visibility_ == HIDDEN)
+    {
+        this->set_visibility(OPEN);
+
+    }
+
 }
 
 void Card::remove_from_game_board()

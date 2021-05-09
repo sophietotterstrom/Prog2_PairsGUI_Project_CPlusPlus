@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 
+#include <iostream>
 
 QT_BEGIN_NAMESPACE
 
@@ -14,7 +15,7 @@ class MainWindow;
 
 QT_END_NAMESPACE
 
-enum Visibility_type {OPEN, HIDDEN, EMPTY};
+enum Visibility_type {OPEN, HIDDEN, FOUND};
 
 class Card
 {

@@ -5,8 +5,11 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QString>
+#include <QTimer>
 
 #include <map>
+#include <string>
+
 #include "card.hh"
 
 
@@ -32,12 +35,15 @@ private slots:
     void handle_card_click();
     void on_reset_button_clicked();
     void add_cards_to_grid();
+    void in_turn();
+    void add_point();
+    bool can_card_be_turned();
     void ask_product_and_calculate_factors(unsigned int& smaller_factor, unsigned int& bigger_factor);
 
 private:
     Ui::MainWindow *ui_;
 
-    std::map<QString, Card*> map_of_cards_;
+    std::map<std::string, Card> map_of_cards_;
 
 };
 #endif // MAINWINDOW_HH
