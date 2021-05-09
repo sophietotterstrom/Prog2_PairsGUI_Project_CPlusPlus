@@ -39,7 +39,8 @@ private slots:
     std::vector<char> mix_letters();
     void in_turn();
     void add_point();
-    bool can_card_be_turned();
+    int cards_turned();
+    bool check_pairs();
     void ask_product_and_calculate_factors(unsigned int& smaller_factor, unsigned int& bigger_factor);
 
 private:

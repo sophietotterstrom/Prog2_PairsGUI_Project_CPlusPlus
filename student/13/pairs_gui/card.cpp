@@ -86,15 +86,17 @@ void Card::turn()
     cardButton_->setStyleSheet(QString("background-color: yellow"));
     cardButton_->setIcon(QIcon());
 
-    /*
+
     if (visibility_ == HIDDEN)
     {
         this->set_visibility(OPEN);
-    }*/
-
+    }
 }
 
 void Card::remove_from_game_board()
 {
-
+    cardButton_->setStyleSheet(QString("background-color: grey"));
+    cardButton_->setIcon(QIcon());
+    cardButton_->setDisabled(true);
+    set_visibility(FOUND);
 }

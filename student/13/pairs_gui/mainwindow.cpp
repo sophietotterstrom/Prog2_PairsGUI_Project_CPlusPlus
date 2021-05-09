@@ -146,17 +146,21 @@ void MainWindow::handle_card_click()
     {
         // card is in the map, turn the card
 
-        if (can_card_be_turned()) // returns true if only 0 or 1 card is turned
+        if (cards_turned() == 0)
         {
             map_of_cards_.at(found_button_name).turn();
         }
-        else {
-            // handle what to do if card can't be turned
+        else if (cards_turned() == 1)
+        {
+            // this is the second card being turned, check for a pair
+            map_of_cards_.at(found_button_name).turn();
+            check_pairs();
+
         }
     }
 }
 
-bool MainWindow::can_card_be_turned()
+int MainWindow::cards_turned()
 {
     // loop through visibility of all cards
     // if only 1 or 0 cards have visibility OPEN, return true
@@ -171,8 +175,30 @@ bool MainWindow::can_card_be_turned()
             i++;
         }
     }
-    if ((i == 0) or (i==1))
+    return i;
+}
+
+bool MainWindow::check_pairs()
+{
+    vector<Card> temp_vect;
+    for (auto& key_value_pair : map_of_cards_)
     {
+        Visibility_type visibility = key_value_pair.second.get_visibility();
+        if (visibility == OPEN)
+        {
+            temp_vect.push_back(key_value_pair.second);
+        }
+    }
+
+    if (temp_vect.at(0).get_letter() == temp_vect.at(1).get_letter())
+    {
+        string name1 = temp_vect.at(0).get_button_name().toStdString();
+        map_of_cards_.at(name1).remove_from_game_board();
+
+        string name2 = temp_vect.at(1).get_button_name().toStdString();
+        map_of_cards_.at(name2).remove_from_game_board();
+
+        // temp_vect.at(1).remove_from_game_board();
         return true;
     }
     else {
