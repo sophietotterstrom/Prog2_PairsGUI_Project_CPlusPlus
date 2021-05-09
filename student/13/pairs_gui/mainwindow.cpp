@@ -11,8 +11,6 @@
 using namespace std;
 
 int NUMBER_OF_CARDS = 24;
-int SEED = 374;
-int TIMER_INTERVAL_ms = 1;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -25,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::on_reset_button_clicked);
 
     add_cards_to_grid();
+
+    this->setWindowTitle("Sophie's Memory Game");
 }
 
 MainWindow::~MainWindow()
@@ -49,33 +49,15 @@ void MainWindow::add_cards_to_grid()
     unsigned int row = 1;
     unsigned int column = 1;
     ask_product_and_calculate_factors(row, column);
-
-    // Drawing a cell to be filled
-    default_random_engine randomEng(SEED);
-    uniform_int_distribution<int> distr(0, row * column - 1);
-
-    // Wiping out the first random number (that is always the lower bound of the distribution)
-    distr(randomEng);
-
-    // If the drawn cell is already filled with a card, next empty cell will be used.
-    // (The next empty cell is searched for circularly, see function next_free.)
-    for(unsigned int i = 0, c = 'A'; i < row * column - 1; i += 2, ++c)
-    {
-        // Adding two identical cards (pairs) in the game board
-        for(unsigned int j = 0; j < 2; ++j)
-        {
-            unsigned int cell = distr(randomEng);
-            //cell = next_free(g_board, cell);
-            //g_board.at(cell / columns).at(cell % columns).set_letter(c);
-            //g_board.at(cell / columns).at(cell % columns).set_visibility(HIDDEN);
-        }
-    }
+    vector<char> vect_of_random_letters = mix_letters();
+    int count = 0;
 
     for (unsigned int i = 0; i<column; i++)
     {
         for (unsigned int j = 0; j<row; j++)
         {
-            Card card = Card('*');
+            char letter = vect_of_random_letters.at(count);
+            Card card = Card(letter);
 
             card.button()->setParent(ui_->gridLayoutWidget);
 
@@ -92,12 +74,35 @@ void MainWindow::add_cards_to_grid()
 
             ui_->cardGridLayout->addWidget(card.button(), j, i);
 
+            // vector_of_cards_.push_back(&card);
 
             map_of_cards_.insert({name_string, card});
-
+            count++;
         }
     }
 }
+
+vector<char> MainWindow::mix_letters()
+{
+    int number_of_pairs = NUMBER_OF_CARDS/2;
+
+    vector<char> vector_of_letters;
+    char character = 'A';
+    for (int i = 0; i < number_of_pairs; i++)
+    {
+        vector_of_letters.push_back(character);
+        vector_of_letters.push_back(character);
+        character++;
+    }
+
+    minstd_rand generator;
+    vector<char>::iterator start = vector_of_letters.begin();
+    vector<char>::iterator end = vector_of_letters.end();
+
+    shuffle(++start, --end, generator);
+    return vector_of_letters;
+}
+
 
 void MainWindow::in_turn()
 {
@@ -124,8 +129,19 @@ void MainWindow::handle_card_click()
     QString found_button_name_qstring = card->objectName();
     string found_button_name = found_button_name_qstring.toStdString();
 
+/*
     // QPushButton *temp_button = dynamic_cast<QPushButton*>(card);
-
+    std::cout << found_button_name_qstring.toUtf8().constData() << std::endl;
+    std::cout << vector_of_cards_.size() << std::endl;
+    for (auto card_pointer: vector_of_cards_) {
+        cout << "IN loop" << endl;
+        std::cout << card_pointer->get_letter() << std::endl;
+        if (card_pointer->get_button_name() == card->objectName())
+            std::cout << " FOUND: " << card_pointer->get_button_name().toUtf8().constData() << std::endl;
+            card_pointer->turn();
+            break;
+    }
+*/
     if (map_of_cards_.find(found_button_name) != map_of_cards_.end())
     {
         // card is in the map, turn the card
@@ -150,7 +166,6 @@ bool MainWindow::can_card_be_turned()
     for (auto& key_value_pair : map_of_cards_)
     {
         Visibility_type visibility = key_value_pair.second.get_visibility();
-
         if (visibility == OPEN)
         {
             i++;
@@ -163,7 +178,6 @@ bool MainWindow::can_card_be_turned()
     else {
         return false;
     }
-
 }
 
 // Asks the desired product from the user, and calculates the factors of

@@ -8,6 +8,7 @@
 #include <QTimer>
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include "card.hh"
@@ -35,6 +36,7 @@ private slots:
     void handle_card_click();
     void on_reset_button_clicked();
     void add_cards_to_grid();
+    std::vector<char> mix_letters();
     void in_turn();
     void add_point();
     bool can_card_be_turned();
@@ -44,6 +46,7 @@ private:
     Ui::MainWindow *ui_;
 
     std::map<std::string, Card> map_of_cards_;
+    std::vector<Card*> vector_of_cards_;
 
 };
 #endif // MAINWINDOW_HH

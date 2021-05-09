@@ -1,4 +1,5 @@
 #include "card.hh"
+#include <iostream>
 
 Card::Card()
 {
@@ -41,7 +42,7 @@ Card::Card(const char c)
 
 void Card::set_letter(const char c)
 {
-
+    letter_ = c;
 }
 
 void Card::set_visibility(const Visibility_type visibility)
@@ -61,7 +62,7 @@ void Card::set_button_name(QString button_name_qstr)
 
 char Card::get_letter() const
 {
-
+    return letter_;
 }
 
 QString Card::get_button_name()
@@ -85,11 +86,11 @@ void Card::turn()
     cardButton_->setStyleSheet(QString("background-color: yellow"));
     cardButton_->setIcon(QIcon());
 
+    /*
     if (visibility_ == HIDDEN)
     {
         this->set_visibility(OPEN);
-
-    }
+    }*/
 
 }
 
