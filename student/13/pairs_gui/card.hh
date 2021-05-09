@@ -39,6 +39,8 @@ public:
     // Turns a card: changes the visibility from open to hidden and vice versa.
     void turn();
 
+    void turn_back();
+
     // Removes a card from the game board: changes the visibility to empty.
     void remove_from_game_board();
 

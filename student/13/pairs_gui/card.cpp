@@ -83,8 +83,9 @@ QPushButton *Card::button()
 void Card::turn()
 {
     cardButton_->setText(QString(QChar::fromLatin1(letter_)));
-    cardButton_->setStyleSheet(QString("background-color: yellow"));
     cardButton_->setIcon(QIcon());
+    cardButton_->setDisabled(true);
+    cardButton_->setStyleSheet(QString("background-color: rgb(231, 174, 36); color: black"));
 
 
     if (visibility_ == HIDDEN)
@@ -93,10 +94,35 @@ void Card::turn()
     }
 }
 
+void Card::turn_back()
+{
+    cardButton_->setDisabled(false);
+    cardButton_->setText(QString());
+    cardButton_->setStyleSheet(QString("background-color: "
+                                      "qlineargradient(spread:pad, "
+                                      "x1:0, y1:1, x2:0, y2:0, stop:0 "
+                                      "rgba(0, 0, 0, 255), stop:0.05 "
+                                      "rgba(14, 8, 73, 210), stop:0.36 "
+                                      "rgba(28, 17, 145, 162), stop:0.6 "
+                                      "rgba(126, 14, 81, 190), stop:0.75 "
+                                      "rgba(234, 11, 11, 182), stop:0.79 "
+                                      "rgba(244, 70, 5, 199), stop:0.86 "
+                                      "rgba(255, 136, 0, 206), stop:0.935 "
+                                      "rgba(239, 236, 55, 112))"));
+    cardButton_->setIcon(QIcon("heart.png"));
+    cardButton_->setIconSize(QSize(50,50));
+
+    if (visibility_ == OPEN)
+    {
+        this->set_visibility(HIDDEN);
+    }
+}
+
 void Card::remove_from_game_board()
 {
-    cardButton_->setStyleSheet(QString("background-color: grey"));
+    cardButton_->setStyleSheet(QString("background-color: grey; color: white"));
     cardButton_->setIcon(QIcon());
     cardButton_->setDisabled(true);
-    set_visibility(FOUND);
+
+    this->set_visibility(FOUND);
 }

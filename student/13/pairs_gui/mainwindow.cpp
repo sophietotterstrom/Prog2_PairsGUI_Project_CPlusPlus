@@ -1,6 +1,7 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "card.hh"
+#include "player.hh"
 
 #include <cstring>
 #include <iostream>
@@ -17,31 +18,25 @@ MainWindow::MainWindow(QWidget *parent)
     , ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
+    this->setWindowTitle("Sophie's Memory Game");
 
-    // connecting buttons
     connect(ui_->resetButton, &QPushButton::clicked, this,
-            &MainWindow::on_reset_button_clicked);
+            &MainWindow::on_resetGameButtonClicked);
+    connect(ui_->cardsbackButton, &QPushButton::clicked, this,
+            &MainWindow::on_turnCardsBackButtonClicked);
+    ui_->cardsbackButton->setDisabled(true);
 
     add_cards_to_grid();
 
-    this->setWindowTitle("Sophie's Memory Game");
+    player1_ = Player(ui_->player1ScoreLCDNum, ui_->player1Label);
+    player2_ = Player(ui_->player2ScoreLCDNum, ui_->player2Label);
+    this->set_turn(&player1_);
+    display_turn();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui_;
-}
-
-void MainWindow::on_card_turned()
-{
-
-
-}
-
-
-void MainWindow::on_reset_button_clicked()
-{
-    ui_->resetButton->setAutoFillBackground(true);
 }
 
 void MainWindow::add_cards_to_grid()
@@ -104,20 +99,35 @@ vector<char> MainWindow::mix_letters()
 }
 
 
-void MainWindow::in_turn()
+void MainWindow::set_turn(Player* player_in_turn)
 {
-    ui_->player1Label->setStyleSheet("background-color: yellow");
-
+    current_player_ = player_in_turn;
 }
+
+void MainWindow::display_turn()
+{
+    if (current_player_ == &player1_)
+    {
+        player1_.display_in_turn();
+        player2_.display_not_in_turn();
+    }
+    else
+    {
+        player2_.display_in_turn();
+        player1_.display_not_in_turn();
+    }
+}
+
 
 void MainWindow::add_point()
 {
-
+    current_player_->add_point();
 }
 
 
 void MainWindow::handle_card_click()
 {
+
     // Storing global cursor position
     QPoint global_click_position = QCursor::pos();
 
@@ -154,8 +164,22 @@ void MainWindow::handle_card_click()
         {
             // this is the second card being turned, check for a pair
             map_of_cards_.at(found_button_name).turn();
-            check_pairs();
-
+            if (check_pairs())
+            {
+                this->add_point();
+            }
+            else
+            {
+                ui_->cardsbackButton->setDisabled(false);
+                if (current_player_ == &player1_)
+                {
+                    set_turn(&player2_);
+                }
+                else
+                {
+                   set_turn(&player1_);
+                }
+            }
         }
     }
 }
@@ -198,12 +222,41 @@ bool MainWindow::check_pairs()
         string name2 = temp_vect.at(1).get_button_name().toStdString();
         map_of_cards_.at(name2).remove_from_game_board();
 
-        // temp_vect.at(1).remove_from_game_board();
         return true;
     }
     else {
         return false;
     }
+}
+
+void MainWindow::on_turnCardsBackButtonClicked()
+{
+    vector<Card> temp_vect;
+    for (auto& key_value_pair : map_of_cards_)
+    {
+        Visibility_type visibility = key_value_pair.second.get_visibility();
+        if (visibility == OPEN)
+        {
+            temp_vect.push_back(key_value_pair.second);
+        }
+    }
+
+    string name1 = temp_vect.at(0).get_button_name().toStdString();
+    map_of_cards_.at(name1).turn_back();
+
+    string name2 = temp_vect.at(1).get_button_name().toStdString();
+    map_of_cards_.at(name2).turn_back();
+
+    display_turn();
+    ui_->cardsbackButton->setDisabled(true);
+}
+
+void MainWindow::on_resetGameButtonClicked()
+{
+    // ui_->resetButton->setAutoFillBackground(true);
+
+
+
 }
 
 // Asks the desired product from the user, and calculates the factors of
