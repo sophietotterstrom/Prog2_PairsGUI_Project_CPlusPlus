@@ -30,20 +30,20 @@ QT_END_NAMESPACE
 class Player
 {
 public:
-    // Default Player constructor
+    // Default Player constructor.
     Player();
 
-    // Player constructor that assigns the player object a score LCD and label
+    // Player constructor that assigns the player object a score LCD and label.
     Player(QLCDNumber* lcd_num, QLabel* label);
 
-    // Adds one point to this player
+    // Adds one point to this player.
     void addPoint();
 
     // Getter methods
     int get_points();
     std::string get_name();
 
-    // UI methods to display the score and the turn indicator
+    // UI methods to display the score and the turn indicator.
     void set_score_on_lcdnum();
     void displayInTurn();
     void displayNotInTurn();

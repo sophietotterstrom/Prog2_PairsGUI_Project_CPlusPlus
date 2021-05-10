@@ -16,22 +16,23 @@
 
 Card::Card()
 {
-
 }
 
 Card::Card(const char c)
 {
-    // Assigns the letter to the card
+    // Assigns the letter to the card.
     this->set_letter(c);
 
-    // Creates a pushButton object for the card UI
+    // Creates a pushButton object for the card UI.
     QPushButton* cardButton = new QPushButton();
     this->set_card_button(cardButton);
 
-    // Set UI to face down/ card back
+    // Set UI to face down/ card back.
     turnBack();
 
-    // Allow the card to stretch to fill the grid cell
+    // Allow the card to stretch to fill the grid cell.
+    // This makes sure if the global variable NUMBER_OF_CARDS
+    // is changed, the game board looks good.
     QSizePolicy cardButton_policy (QSizePolicy::Minimum, QSizePolicy::Minimum);
     cardButton_policy.setHorizontalStretch(1);
     cardButton_policy.setVerticalStretch(1);
@@ -84,12 +85,16 @@ void Card::turnFace()
 
     // Render the card's character text
     cardButton_->setText(QChar(letter_));
+
     // Remove the icon
     cardButton_->setIcon(QIcon());
+
     // Disable the button
     cardButton_->setDisabled(true);
+
     // Update background color and text color
     cardButton_->setStyleSheet(QString("background-color: rgb(231, 174, 36); color: black"));
+
     // Update visibility to OPEN
     this->set_visibility(OPEN);
 }
@@ -100,11 +105,14 @@ void Card::turnBack()
 
     // Remove the card's character text
     cardButton_->setText(QString());
+
     // Put the icon back on the card
     cardButton_->setIcon(QIcon("heart.png"));
     cardButton_->setIconSize(QSize(50,50));
+
     // Enable the button
     cardButton_->setDisabled(false);
+
     // Update background color to the gradient
     cardButton_->setStyleSheet(QString("background-color: "
                                       "qlineargradient(spread:pad, "
@@ -117,6 +125,7 @@ void Card::turnBack()
                                       "rgba(244, 70, 5, 199), stop:0.86 "
                                       "rgba(255, 136, 0, 206), stop:0.935 "
                                       "rgba(239, 236, 55, 112))"));
+
     // Update visibility to HIDDEN
     this->set_visibility(HIDDEN);
 }
@@ -127,6 +136,7 @@ void Card::remove_from_game_board()
 
     // Update the background to grey and the text label to white
     cardButton_->setStyleSheet(QString("background-color: grey; color: white"));
+
     // Update visibility to FOUND
     this->set_visibility(FOUND);
 }

@@ -44,10 +44,11 @@ public:
     char get_letter() const;
     QString get_button_name();
     Visibility_type get_visibility() const;
+    // returns a pointed to the cardButton
     QPushButton* button();
 
     // Turns a card: changes the visibility from hidden to open,
-    // and configures button UI to show card.
+    // and configures button UI to show card and its character.
     void turnFace();
 
     // Turns a card back: changes visibility from open to hidden,

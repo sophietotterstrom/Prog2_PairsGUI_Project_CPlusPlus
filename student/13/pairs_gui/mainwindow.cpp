@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui_->setupUi(this);
     this->setWindowTitle("Sophie's Memory Game");
 
+    // Connect the resert game button.
     connect(ui_->resetButton, &QPushButton::clicked, this,
             &MainWindow::on_resetGameButtonClicked);
 
@@ -43,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     player1_ = Player(ui_->player1ScoreLCDNum, ui_->player1Label);
     player2_ = Player(ui_->player2ScoreLCDNum, ui_->player2Label);
 
-    // Start the game on Player 1
+    // Start the game on Player 1 and make sure it is displayed.
     this->setTurn(&player1_);
     setDisplayTurn();
 }
@@ -71,21 +72,25 @@ void MainWindow::on_cardClick()
     if (map_of_cards_.find(found_button_name)
             != map_of_cards_.end())
     {
+        // Call method to find out how many cards are open / face up.
+        // If all cards are facing down, turn the clicked card.
         if (numOpenCards() == 0)
         {
             // Turn over the clicked card
             map_of_cards_.at(found_button_name)->turnFace();
         }
-        // After two cards are turned, check for pairs
+        // If one card is open, open the second card (the one the user
+        // just clicked) and then check for pairs.
         else if (numOpenCards() == 1)
         {
             map_of_cards_.at(found_button_name)->turnFace();
+
             // When a match is found, increment the player's
             // points and check if the game is over
             if (checkPairs())
             {
-                this->addPoint();
-                if (isGameOver())
+                this->addPoint(); // increments the player's points
+                if (isGameOver()) // returns true if all cards have been found.
                 {
                     gameOver();
                 }
@@ -95,6 +100,8 @@ void MainWindow::on_cardClick()
             else
             {
                 ui_->nextTurnButton->setDisabled(false);
+
+                // Handle changing turns according who was currently playing.
                 if (current_player_ == &player1_)
                 {
                     setTurn(&player2_);
@@ -130,6 +137,9 @@ void MainWindow::on_resetGameButtonClicked()
 {
     // Get a new vector of random letters
     vector<char> vect_of_random_letters = mixLetters();
+
+    // Count is the index of both the map_of_cards_ and the
+    // newly randomized vector of letters.
     int count = 0;
     for (auto& key_card_pair : map_of_cards_)
     {
@@ -160,6 +170,7 @@ void MainWindow::addCardsToGrid()
 {
     unsigned int row = 1;
     unsigned int column = 1;
+
     // Get grid dimensions based on number of cards
     askProductAndCalculateFactors(row, column);
 
@@ -206,6 +217,7 @@ vector<char> MainWindow::mixLetters()
     char character = 'A';
     for (int i = 0; i < number_of_pairs; i++)
     {
+        // Adding two of the same character since we want to have pairs.
         vector_of_letters.push_back(character);
         vector_of_letters.push_back(character);
         character++;
@@ -222,7 +234,8 @@ vector<char> MainWindow::mixLetters()
     return vector_of_letters;
 }
 
-void MainWindow::askProductAndCalculateFactors(unsigned int& smaller_factor, unsigned int& bigger_factor)
+void MainWindow::askProductAndCalculateFactors(unsigned int& smaller_factor,
+                                               unsigned int& bigger_factor)
 {
     unsigned int product = NUMBER_OF_CARDS;
 
@@ -242,6 +255,7 @@ void MainWindow::setTurn(Player* player_in_turn)
 {
     current_player_ = player_in_turn;
 }
+
 
 void MainWindow::setDisplayTurn()
 {
@@ -310,8 +324,7 @@ vector<Card*> MainWindow::openCardVector()
     // Add face up cards to a vector
     for (auto& key_value_pair : map_of_cards_)
     {
-        Visibility_type visibility = key_value_pair.second->get_visibility();
-        if (visibility == OPEN)
+        if (key_value_pair.second->get_visibility() == OPEN)
         {
             temp_vect.push_back(key_value_pair.second);
         }
@@ -344,25 +357,38 @@ void MainWindow::gameOver()
     // Determine which player wins, or if a tie occurred.
     if (player1_.get_points() > player2_.get_points())
     {
-        win_string = player1_.get_name() + " has won with " + to_string(player1_.get_points()) + " pairs!  ";
-    } else if (player2_.get_points() > player1_.get_points())
+        win_string = player1_.get_name()
+                + " has won with "
+                + to_string(player1_.get_points())
+                + " pairs!  ";
+    }
+    else if (player2_.get_points() > player1_.get_points())
     {
-        win_string = player2_.get_name() + " has won with " + to_string(player2_.get_points()) + " pairs!  ";
-    } else
+        win_string = player2_.get_name()
+                + " has won with "
+                + to_string(player2_.get_points())
+                + " pairs!  ";
+    }
+    else
     {
-        win_string = "Tie game! Each player has " + to_string(player1_.get_points()) + " pairs.";
+        win_string = "Tie game! Each player has "
+                + to_string(player1_.get_points())
+                + " pairs.";
     }
 
-    // Write the win_string to the message box
+    // Write the win_string to the message box.
     winAlertBox.setText(QString(win_string.c_str()));
-    // Center message box to MainWindow
+
+    // Center message box to MainWindow.
     winAlertBox.setParent(ui_->centralwidget);
-    // Set message box to block all other input until dismissed
+
+    // Set message box to block all other input until dismissed.
     winAlertBox.setWindowModality(Qt::WindowModal);
-    // Display the window
+
+    // Display the window.
     winAlertBox.exec();
 
-    // Reset the game
+    // Reset the game after it is over and message of the winner has been seen
     on_resetGameButtonClicked();
 }
 
