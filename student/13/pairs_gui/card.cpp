@@ -1,5 +1,18 @@
+/* Class Card
+ * ----------
+ * COMP.CS.110 SPRING 2021
+ * ----------
+ * Class models a card in the memory game.
+ * Includes methods for both the UI and game logic.
+ * ----------
+ * Author information:
+ * Name: Sophie Tötterström
+ * Student ID: 050102822
+ * Username: knsoto
+ * Email: sophie.totterstrom@tuni.fi
+*/
+
 #include "card.hh"
-#include <iostream>
 
 Card::Card()
 {
@@ -8,36 +21,21 @@ Card::Card()
 
 Card::Card(const char c)
 {
+    // Assigns the letter to the card
     this->set_letter(c);
 
+    // Creates a pushButton object for the card UI
     QPushButton* cardButton = new QPushButton();
-
     this->set_card_button(cardButton);
 
-    this->button()->setObjectName(QString(c));
+    // Set UI to face down/ card back
+    turnBack();
 
-    this->button()->setIcon(QIcon("heart.png"));
-    this->button()->setIconSize(QSize(50,50));
-
-    this->button()->setStyleSheet(QString("background-color: "
-                                      "qlineargradient(spread:pad, "
-                                      "x1:0, y1:1, x2:0, y2:0, stop:0 "
-                                      "rgba(0, 0, 0, 255), stop:0.05 "
-                                      "rgba(14, 8, 73, 210), stop:0.36 "
-                                      "rgba(28, 17, 145, 162), stop:0.6 "
-                                      "rgba(126, 14, 81, 190), stop:0.75 "
-                                      "rgba(234, 11, 11, 182), stop:0.79 "
-                                      "rgba(244, 70, 5, 199), stop:0.86 "
-                                      "rgba(255, 136, 0, 206), stop:0.935 "
-                                      "rgba(239, 236, 55, 112))"));
-
-
+    // Allow the card to stretch to fill the grid cell
     QSizePolicy cardButton_policy (QSizePolicy::Minimum, QSizePolicy::Minimum);
     cardButton_policy.setHorizontalStretch(1);
     cardButton_policy.setVerticalStretch(1);
     this->button()->setSizePolicy(cardButton_policy);
-
-    this->set_visibility(HIDDEN);
 }
 
 void Card::set_letter(const char c)
@@ -80,24 +78,34 @@ QPushButton *Card::button()
     return this->cardButton_;
 }
 
-void Card::turn()
+void Card::turnFace()
 {
-    cardButton_->setText(QString(QChar::fromLatin1(letter_)));
+    // Turn card over to face up
+
+    // Render the card's character text
+    cardButton_->setText(QChar(letter_));
+    // Remove the icon
     cardButton_->setIcon(QIcon());
+    // Disable the button
     cardButton_->setDisabled(true);
+    // Update background color and text color
     cardButton_->setStyleSheet(QString("background-color: rgb(231, 174, 36); color: black"));
-
-
-    if (visibility_ == HIDDEN)
-    {
-        this->set_visibility(OPEN);
-    }
+    // Update visibility to OPEN
+    this->set_visibility(OPEN);
 }
 
-void Card::turn_back()
+void Card::turnBack()
 {
-    cardButton_->setDisabled(false);
+    // Turn card back to face down
+
+    // Remove the card's character text
     cardButton_->setText(QString());
+    // Put the icon back on the card
+    cardButton_->setIcon(QIcon("heart.png"));
+    cardButton_->setIconSize(QSize(50,50));
+    // Enable the button
+    cardButton_->setDisabled(false);
+    // Update background color to the gradient
     cardButton_->setStyleSheet(QString("background-color: "
                                       "qlineargradient(spread:pad, "
                                       "x1:0, y1:1, x2:0, y2:0, stop:0 "
@@ -109,20 +117,16 @@ void Card::turn_back()
                                       "rgba(244, 70, 5, 199), stop:0.86 "
                                       "rgba(255, 136, 0, 206), stop:0.935 "
                                       "rgba(239, 236, 55, 112))"));
-    cardButton_->setIcon(QIcon("heart.png"));
-    cardButton_->setIconSize(QSize(50,50));
-
-    if (visibility_ == OPEN)
-    {
-        this->set_visibility(HIDDEN);
-    }
+    // Update visibility to HIDDEN
+    this->set_visibility(HIDDEN);
 }
 
 void Card::remove_from_game_board()
 {
-    cardButton_->setStyleSheet(QString("background-color: grey; color: white"));
-    cardButton_->setIcon(QIcon());
-    cardButton_->setDisabled(true);
+    // Remove Card
 
+    // Update the background to grey and the text label to white
+    cardButton_->setStyleSheet(QString("background-color: grey; color: white"));
+    // Update visibility to FOUND
     this->set_visibility(FOUND);
 }

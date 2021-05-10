@@ -56,7 +56,7 @@ font: 16pt &quot;Clean&quot;;</string>
 font: 16pt &quot;Clean&quot;;</string>
     </property>
     <property name="text">
-     <string> Player 1:</string>
+     <string> Player 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="player2Label">
@@ -73,7 +73,7 @@ font: 16pt &quot;Clean&quot;;</string>
 font: 16pt &quot;Clean&quot;;</string>
     </property>
     <property name="text">
-     <string> Player 2:</string>
+     <string> Player 2</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="player2ScoreLCDNum">
@@ -102,7 +102,7 @@ font: 16pt &quot;Clean&quot;;</string>
      <string notr="true">background-color: rgb(215, 198, 225);</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="cardsbackButton">
+   <widget class="QPushButton" name="nextTurnButton">
     <property name="geometry">
      <rect>
       <x>640</x>
@@ -116,7 +116,7 @@ font: 16pt &quot;Clean&quot;;</string>
 font: 16pt &quot;Clean&quot;;</string>
     </property>
     <property name="text">
-     <string>Turn Cards Back</string>
+     <string>Next Turn</string>
     </property>
    </widget>
   </widget>
